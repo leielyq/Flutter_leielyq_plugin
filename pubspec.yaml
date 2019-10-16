@@ -1,0 +1,35 @@
+name: flutter_leielyq_plugin
+description: A new leielyq Flutter plugin.
+version: 1.0.0
+author:
+homepage:
+
+environment:
+  sdk: ">=2.1.0 <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^0.1.2
+  banner_view:
+    git: https://github.com/yangxiaoweihn/BannerView.git
+  dio: 2.1.13
+  #  dio_http_cache: ^0.1.2
+  extended_image: ^0.5.5
+  loading_more_list: ^0.3.7
+  pull_to_refresh_notification: ^0.3.2
+  font_awesome_flutter: ^8.0.1
+  flutter_boost:
+    git:
+      url: https://github.com/alibaba/flutter_boost.git
+      ref: feature/flutter_1.9_upgrade
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+flutter:
+
+  plugin:
+    androidPackage: com.leielyq.flutter_leielyq_plugin
+    pluginClass: FlutterLeielyqPlugin
+
