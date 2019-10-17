@@ -72,13 +72,15 @@ class HttpUtil {
     if (!url.startsWith('http')) {
       url = baseUrl + url;
     }
+    print("=========================================");
+    print("-----------------------------------------");
     print(method + " " + url);
     print(data);
     try {
       Map<String, dynamic> dataMap = data == null ? new Map() : data;
       Map<String, dynamic> headersMap = headers == null ? new Map() : headers;
 
-      headersMap.addAll(dataMap);
+      headersMap.addAll(this.dataMap);
 
       // 配置dio请求信息
       Response response;
