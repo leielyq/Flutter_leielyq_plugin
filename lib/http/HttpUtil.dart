@@ -1,21 +1,22 @@
 import 'package:dio/dio.dart';
 import 'dart:convert';
 
-class BaseUrl{
-  // 配置默认请求地址
-  static const String url = 'https://xbl.easy.echosite.cn';
-}
+
 
 class HttpUtil{
 
+ static Map<String, dynamic> dataMap;
 
- static String deviceId = "";
- static String token = "";
 
-  static void set(String deviceid,String token1){
-    deviceId = deviceid;
-    token = token1;
-  }
+ static void addHeader(Map<String, dynamic> data){
+   dataMap = data;
+ }
+
+ static String baseUrl = '';
+
+ static void changBaseUrl(String url){
+   baseUrl = url;
+ }
 
   static void get(
       String url,
@@ -86,15 +87,15 @@ class HttpUtil{
 
     // 检测请求地址是否是完整地址
     if(!url.startsWith('http')){
-      url = BaseUrl.url + url;
+      url = baseUrl + url;
     }
     print( method +" "+url);
     print(data);
     try{
       Map<String, dynamic> dataMap = data == null ? new Map() : data;
       Map<String, dynamic> headersMap = headers == null ? new Map() : headers;
-      headersMap['token'] = token;
-      headersMap['deviceid'] = deviceId;
+
+      headersMap.addAll(dataMap);
       
       // 配置dio请求信息
       Response response;
