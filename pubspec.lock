@@ -97,8 +97,8 @@ packages:
     description:
       path: "."
       ref: "feature/flutter_1.9_androidx_upgrade"
-      resolved-ref: "238255d06fcb18d014b0af1cd8da1a4b673e1d5a"
-      url: "https://github.com/alibaba/flutter_boost.git"
+      resolved-ref: "5ec85b7f49aaacd1bf75502a661860950f7f69ab"
+      url: "https://github.com/leielyq/flutter_boost.git"
     source: git
     version: "0.1.54"
   flutter_test:
