@@ -96,8 +96,8 @@ packages:
     dependency: "direct main"
     description:
       path: "."
-      ref: "feature/flutter_1.9_androidx_upgrade"
-      resolved-ref: "238255d06fcb18d014b0af1cd8da1a4b673e1d5a"
+      ref: "feature/flutter_1.9_upgrade"
+      resolved-ref: e4f8192bf54f4884f56cec0c6ed1f07afe6a44cc
       url: "https://github.com/alibaba/flutter_boost.git"
     source: git
     version: "0.1.54"
