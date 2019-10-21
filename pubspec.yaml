@@ -21,7 +21,7 @@ dependencies:
   font_awesome_flutter: ^8.0.1
   flutter_boost:
     git:
-      url: https://github.com/leielyq/flutter_boost.git
+      url: https://github.com/alibaba/flutter_boost.git
       ref: feature/flutter_1.9_androidx_upgrade
 
 dev_dependencies:
