@@ -59,6 +59,24 @@ class HttpUtil {
         data: data, headers: headers, error: error);
   }
 
+  /*FormData formData = new FormData.from({
+    "file": new UploadFileInfo(new File(path), name)
+  });*/
+
+  void upload(String url,
+      {Map<String, dynamic> data,
+        Map<String, dynamic> headers,
+        Function success,
+        Function error}) async {
+
+    FormData formData = FormData.from(data);
+
+    // 发送post请求
+    _sendRequest(url, 'post', success,
+        data: formData, headers: headers, error: error);
+  }
+
+
   // 请求处理
   Future _sendRequest(String url, String method, Function success,
       {Map<String, dynamic> data,
