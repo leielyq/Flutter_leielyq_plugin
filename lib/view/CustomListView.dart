@@ -49,7 +49,7 @@ class _CustomListViewState extends State<CustomListView> {
             );
           } else {
             return Center(
-              child: Text("No Data,woo!"),
+              child: widget.emptyChild??Text("No Data,woo!"),
             );
           }
 
