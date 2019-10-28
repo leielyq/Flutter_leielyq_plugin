@@ -31,6 +31,7 @@ dev_dependencies:
 flutter:
 
   plugin:
+    androidX: false
     androidPackage: com.leielyq.flutter_leielyq_plugin
     pluginClass: FlutterLeielyqPlugin
 
