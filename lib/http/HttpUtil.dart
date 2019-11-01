@@ -31,9 +31,9 @@ class HttpUtil {
 
   void get(String url,
       {Map<String, dynamic> data,
-      Map<String, dynamic> headers,
-      Function success,
-      Function error}) async {
+        Map<String, dynamic> headers,
+        Function success,
+        Function error}) async {
     // 数据拼接
     if (data != null && data.isNotEmpty) {
       StringBuffer options = new StringBuffer('?');
@@ -51,9 +51,9 @@ class HttpUtil {
 
   void post(String url,
       {Map<String, dynamic> data,
-      Map<String, dynamic> headers,
-      Function success,
-      Function error}) async {
+        Map<String, dynamic> headers,
+        Function success,
+        Function error}) async {
     // 发送post请求
     _sendRequest(url, 'post', success,
         data: data, headers: headers, error: error);
@@ -68,20 +68,20 @@ class HttpUtil {
         Map<String, dynamic> headers,
         Function success,
         Function error}) async {
-
     FormData formData = FormData.from(data);
 
     // 发送post请求
     _sendRequest(url, 'post', success,
-        data: formData, headers: headers, error: error);
+        formData: formData, headers: headers, error: error);
   }
 
 
   // 请求处理
   Future _sendRequest(String url, String method, Function success,
       {Map<String, dynamic> data,
-      Map<String, dynamic> headers,
-      Function error}) async {
+        Map<String, dynamic> headers,
+        FormData formData,
+        Function error}) async {
     int _code;
     String _msg;
     var _backData;
@@ -104,14 +104,14 @@ class HttpUtil {
       Response response;
       Dio dio = new Dio();
       dio.options.connectTimeout = 10000; // 服务器链接超时，毫秒
-      dio.options.receiveTimeout = 3000; // 响应流上前后两次接受到数据的间隔，毫秒
+      dio.options.receiveTimeout = 30000; // 响应流上前后两次接受到数据的间隔，毫秒
       dio.options.headers
           .addAll(headersMap); // 添加headers,如需设置统一的headers信息也可在此添加
 
       if (method == 'get') {
         response = await dio.get(url);
       } else {
-        response = await dio.post(url, data: dataMap, queryParameters: dataMap);
+        response = await dio.post(url, data: formData, queryParameters: dataMap);
       }
 
       if (response.statusCode != 200) {
@@ -121,24 +121,10 @@ class HttpUtil {
       }
 
       print(response.data);
-
-      // 返回结果处理
-      Map<String, dynamic> resCallbackMap = response.data;
-      _code = resCallbackMap['code'];
-      _msg = resCallbackMap['errmsg'];
-      _backData = resCallbackMap['data'];
-
-      bool _flag = resCallbackMap['flag'];
-
-      if (success != null) {
-        if (_flag) {
-          success(_backData);
-        } else {
-          String errorMsg = _code.toString() + ':' + _msg;
-          _handError(error, errorMsg);
-        }
-      }
+      if (success != null)
+        success(response.data);
     } catch (exception) {
+      print("异常出现了！抓住他： " + url);
       _handError(error, '数据请求错误：' + exception.toString());
     }
   }
