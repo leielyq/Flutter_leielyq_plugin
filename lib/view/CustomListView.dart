@@ -24,36 +24,54 @@ class _CustomListViewState extends State<CustomListView> {
     var sliverList = SliverList(
       delegate: SliverChildBuilderDelegate(
             (BuildContext context, int index) {
-          if (widget.data.length != 0) {
-            if (index.isEven) {
-              if (index == widget.data.length * 2) {
-                return Offstage(
-                    offstage: widget.data.length < 10,
-                    child: Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: Center(
-                        child: CircularProgressIndicator(),
+          if (widget.data == null) {
+            return Column(
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Center(
+                    child: Container(
+                      width: 40,
+                      height: 40,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 4.0,
+                        backgroundColor: Colors.blue,
+                        // value: 0.2,
+                        valueColor: AlwaysStoppedAnimation<Color>(Colors.red),
                       ),
-                    ));
-              } else {
-                return Padding(
-                  padding: EdgeInsets.all(16.0),
-                  child: widget.childBuilderDelegate.build(context,
-                      index.toInt() ~/ 2, widget.data[index.toInt() ~/ 2]),
-                );
-              }
-            }
-            return Container(
-              color: Colors.white12,
-              height: 20,
-            );
-          } else {
-            return Center(
-              child: widget.emptyChild??Text("No Data,woo!"),
+                    ),
+                  ),
+                ),
+                Text('loading...')
+              ],
             );
           }
 
+          if (widget.data.length == 0) {
+            return Center(
+              child: widget.emptyChild ?? Text("No Data,woo!"),
+            );
+          }
 
+          if (index.isEven) {
+            if (index == widget.data.length * 2) {
+              return Offstage(
+                  offstage: widget.data.length < 10,
+                  child: Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: Center(
+                      child: CircularProgressIndicator(),
+                    ),
+                  ));
+            } else {
+              return widget.childBuilderDelegate.build(context,
+                  index.toInt() ~/ 2, widget.data[index.toInt() ~/ 2]);
+            }
+          }
+          return Container(
+            color: Colors.white12,
+            height: 20,
+          );
         },
         semanticIndexCallback: (Widget widget, int localIndex) {
           if (localIndex.isEven) {

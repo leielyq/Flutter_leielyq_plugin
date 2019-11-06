@@ -8,6 +8,8 @@ class HttpUtil {
   static HttpUtil get instance => getInstance();
   static HttpUtil _instance;
 
+  final String tag = "HttpUtil";
+
   HttpUtil._internal() {}
 
   static HttpUtil getInstance() {
@@ -90,43 +92,40 @@ class HttpUtil {
     if (!url.startsWith('http')) {
       url = baseUrl + url;
     }
-    print("=========================================");
-    print("-----------------------------------------");
-    print(method + " " + url);
-    print(data);
-    try {
-      Map<String, dynamic> dataMap = data == null ? new Map() : data;
-      Map<String, dynamic> headersMap = headers == null ? new Map() : headers;
+    print("$tag=========================================");
+    print("$tag-----------------------------------------");
+    print('$tag  $method + " " + $url');
+    print('$tag  $data');
 
-      headersMap.addAll(this.dataMap);
+    Map<String, dynamic> dataMap = data == null ? new Map() : data;
+    Map<String, dynamic> headersMap = headers == null ? new Map() : headers;
 
-      // 配置dio请求信息
-      Response response;
-      Dio dio = new Dio();
-      dio.options.connectTimeout = 10000; // 服务器链接超时，毫秒
-      dio.options.receiveTimeout = 30000; // 响应流上前后两次接受到数据的间隔，毫秒
-      dio.options.headers
-          .addAll(headersMap); // 添加headers,如需设置统一的headers信息也可在此添加
+    headersMap.addAll(this.dataMap);
 
-      if (method == 'get') {
-        response = await dio.get(url);
-      } else {
-        response = await dio.post(url, data: formData, queryParameters: dataMap);
-      }
+    // 配置dio请求信息
+    Response response;
+    Dio dio = new Dio();
+    dio.options.connectTimeout = 10000; // 服务器链接超时，毫秒
+    dio.options.receiveTimeout = 30000; // 响应流上前后两次接受到数据的间隔，毫秒
+    dio.options.headers
+        .addAll(headersMap); // 添加headers,如需设置统一的headers信息也可在此添加
 
-      if (response.statusCode != 200) {
-        _msg = '网络请求错误,状态码:' + response.statusCode.toString();
-        _handError(error, _msg);
-        return;
-      }
-
-      print(response.data);
-      if (success != null)
-        success(response.data);
-    } catch (exception) {
-      print("异常出现了！抓住他： " + url);
-      _handError(error, '数据请求错误：' + exception.toString());
+    if (method == 'get') {
+      response = await dio.get(url);
+    } else {
+      response = await dio.post(url, data: formData, queryParameters: dataMap);
     }
+
+    if (response.statusCode != 200) {
+      _msg = '网络请求错误,状态码:' + response.statusCode.toString();
+      print(tag+'   '+response.data);
+      _handError(error, _msg);
+      return;
+    }
+
+    print(response.data);
+    if (success != null)
+      success(response.data);
   }
 
   // 返回错误信息
