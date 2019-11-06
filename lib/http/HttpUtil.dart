@@ -1,5 +1,9 @@
+import 'dart:core';
+
 import 'package:dio/dio.dart';
 import 'dart:convert';
+
+const bool inProduction = const bool.fromEnvironment("dart.vm.product");
 
 class HttpUtil {
   // 工厂模式
@@ -33,9 +37,9 @@ class HttpUtil {
 
   void get(String url,
       {Map<String, dynamic> data,
-        Map<String, dynamic> headers,
-        Function success,
-        Function error}) async {
+      Map<String, dynamic> headers,
+      Function success,
+      Function error}) async {
     // 数据拼接
     if (data != null && data.isNotEmpty) {
       StringBuffer options = new StringBuffer('?');
@@ -53,9 +57,9 @@ class HttpUtil {
 
   void post(String url,
       {Map<String, dynamic> data,
-        Map<String, dynamic> headers,
-        Function success,
-        Function error}) async {
+      Map<String, dynamic> headers,
+      Function success,
+      Function error}) async {
     // 发送post请求
     _sendRequest(url, 'post', success,
         data: data, headers: headers, error: error);
@@ -67,9 +71,9 @@ class HttpUtil {
 
   void upload(String url,
       {Map<String, dynamic> data,
-        Map<String, dynamic> headers,
-        Function success,
-        Function error}) async {
+      Map<String, dynamic> headers,
+      Function success,
+      Function error}) async {
     FormData formData = FormData.from(data);
 
     // 发送post请求
@@ -77,13 +81,12 @@ class HttpUtil {
         formData: formData, headers: headers, error: error);
   }
 
-
   // 请求处理
   Future _sendRequest(String url, String method, Function success,
       {Map<String, dynamic> data,
-        Map<String, dynamic> headers,
-        FormData formData,
-        Function error}) async {
+      Map<String, dynamic> headers,
+      FormData formData,
+      Function error}) async {
     int _code;
     String _msg;
     var _backData;
@@ -92,10 +95,10 @@ class HttpUtil {
     if (!url.startsWith('http')) {
       url = baseUrl + url;
     }
-    print("$tag=========================================");
-    print("$tag-----------------------------------------");
-    print('$tag  $method + " " + $url');
-    print('$tag  $data');
+    netPrint("=========================================");
+    netPrint("-----------------------------------------");
+    netPrint(method + " " + url);
+    netPrint(data);
 
     Map<String, dynamic> dataMap = data == null ? new Map() : data;
     Map<String, dynamic> headersMap = headers == null ? new Map() : headers;
@@ -107,8 +110,7 @@ class HttpUtil {
     Dio dio = new Dio();
     dio.options.connectTimeout = 10000; // 服务器链接超时，毫秒
     dio.options.receiveTimeout = 30000; // 响应流上前后两次接受到数据的间隔，毫秒
-    dio.options.headers
-        .addAll(headersMap); // 添加headers,如需设置统一的headers信息也可在此添加
+    dio.options.headers.addAll(headersMap); // 添加headers,如需设置统一的headers信息也可在此添加
 
     if (method == 'get') {
       response = await dio.get(url);
@@ -118,21 +120,24 @@ class HttpUtil {
 
     if (response.statusCode != 200) {
       _msg = '网络请求错误,状态码:' + response.statusCode.toString();
-      print(tag+'   '+response.data);
+      netPrint(response.data);
       _handError(error, _msg);
       return;
     }
 
-    print(response.data);
-    if (success != null)
-      success(response.data);
+    netPrint(response.data);
+    if (success != null) success(response.data);
   }
 
   // 返回错误信息
   Future _handError(Function errorCallback, String errorMsg) {
     if (errorCallback != null) {
       errorCallback(errorMsg);
-      print(errorMsg);
+      netPrint(errorMsg);
     }
+  }
+
+  netPrint(res) {
+    if (!inProduction) print('$tag ===> $res');
   }
 }
