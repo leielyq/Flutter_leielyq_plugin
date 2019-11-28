@@ -46,6 +46,7 @@ class _FoldTextState extends State<FoldText> {
                     text: text.length > widget.num?isFold ? '+++' : "---":"",
                     style: TextStyle(color: Colors.redAccent),
                     recognizer: _recognizer),
+
               ]),
         ),
       ),
