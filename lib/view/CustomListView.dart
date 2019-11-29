@@ -5,23 +5,30 @@ class CustomListView extends StatefulWidget {
   final List<dynamic> data;
   final Widget emptyChild;
   final CustomChildBuilderDelegate childBuilderDelegate;
+  final Function call;
 
   const CustomListView(
-      {Key key, this.data, this.emptyChild, this.childBuilderDelegate})
+      {Key key, this.data, this.emptyChild, this.childBuilderDelegate, this.call})
       : super(key: key);
 
   @override
   _CustomListViewState createState() => _CustomListViewState();
 }
 
+
 abstract class CustomChildBuilderDelegate {
   Widget build(BuildContext context, int index, dynamic data);
 }
 
 class _CustomListViewState extends State<CustomListView> {
+
+
   @override
   Widget build(BuildContext context) {
+    bool isLoading = false;
+
     var sliverList = SliverList(
+
       delegate: SliverChildBuilderDelegate(
             (BuildContext context, int index) {
           if (widget.data == null) {
@@ -55,14 +62,23 @@ class _CustomListViewState extends State<CustomListView> {
 
           if (index.isEven) {
             if (index == widget.data.length * 2) {
-              return Offstage(
-                  offstage: widget.data.length < 10,
-                  child: Padding(
-                    padding: EdgeInsets.all(8.0),
-                    child: Center(
-                      child: CircularProgressIndicator(),
-                    ),
-                  ));
+              if (widget.call != null && !isLoading) {
+                isLoading = true;
+                widget.call();
+              }
+              if (widget.data.length % 10 == 0) {
+                return Offstage(
+                    offstage: widget.data.length < 10,
+                    child: Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: Center(
+                        child: CircularProgressIndicator(),
+                      ),
+                    ));
+              }
+              return Center(
+                child: Text('没有更多数据啦~'),
+              );
             } else {
               return widget.childBuilderDelegate.build(context,
                   index.toInt() ~/ 2, widget.data[index.toInt() ~/ 2]);

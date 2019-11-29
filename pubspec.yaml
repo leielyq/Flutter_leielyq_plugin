@@ -23,6 +23,7 @@ dependencies:
     git:
       url: https://github.com/alibaba/flutter_boost.git
       ref: feature/flutter_1.9_upgrade
+  flutter_screenutil: ^0.5.1
 
 dev_dependencies:
   flutter_test:
