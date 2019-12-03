@@ -6,9 +6,10 @@ class CustomListView extends StatefulWidget {
   final Widget emptyChild;
   final CustomChildBuilderDelegate childBuilderDelegate;
   final Function call;
+  final bool isLoadingMore;
 
   const CustomListView(
-      {Key key, this.data, this.emptyChild, this.childBuilderDelegate, this.call})
+      {Key key, this.data, this.emptyChild, this.childBuilderDelegate, this.call, this.isLoadingMore})
       : super(key: key);
 
   @override
@@ -22,35 +23,42 @@ abstract class CustomChildBuilderDelegate {
 
 class _CustomListViewState extends State<CustomListView> {
 
-
   @override
   Widget build(BuildContext context) {
-    bool isLoading = false;
+    bool isLoading = widget.isLoadingMore ?? false;
 
     var sliverList = SliverList(
-
-      delegate: SliverChildBuilderDelegate(
+      delegate:
+      SliverChildBuilderDelegate(
             (BuildContext context, int index) {
           if (widget.data == null) {
-            return Column(
-              children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Center(
-                    child: Container(
-                      width: 40,
-                      height: 40,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 4.0,
-                        backgroundColor: Colors.blue,
-                        // value: 0.2,
-                        valueColor: AlwaysStoppedAnimation<Color>(Colors.red),
+            return Container(
+              color: Colors.white12,
+              height: 200,
+              child: Center(
+                child: Column(
+                  children: <Widget>[
+
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Center(
+                        child: Container(
+                          width: 40,
+                          height: 40,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 4.0,
+                            backgroundColor: Colors.blue,
+                            // value: 0.2,
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                                Colors.red),
+                          ),
+                        ),
                       ),
                     ),
-                  ),
+                    Text('loading...')
+                  ],
                 ),
-                Text('loading...')
-              ],
+              ),
             );
           }
 
@@ -62,11 +70,10 @@ class _CustomListViewState extends State<CustomListView> {
 
           if (index.isEven) {
             if (index == widget.data.length * 2) {
-              if (widget.call != null && !isLoading) {
+              if (!isLoading) {
                 isLoading = true;
-                widget.call();
-              }
-              if (widget.data.length % 10 == 0) {
+                if (widget.call != null)
+                  widget.call();
                 return Offstage(
                     offstage: widget.data.length < 10,
                     child: Padding(
@@ -95,7 +102,7 @@ class _CustomListViewState extends State<CustomListView> {
           }
           return null;
         },
-        childCount: widget.data != null ? widget.data.length * 2 + 1 : 0,
+        childCount: widget.data != null ? widget.data.length * 2 + 1 : 1,
       ),
     );
 
