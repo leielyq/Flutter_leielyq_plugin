@@ -7,30 +7,34 @@ class CustomListView extends StatefulWidget {
   final CustomChildBuilderDelegate childBuilderDelegate;
   final Function call;
   final bool isLoadingMore;
+  final Widget divider;
 
   const CustomListView(
-      {Key key, this.data, this.emptyChild, this.childBuilderDelegate, this.call, this.isLoadingMore})
+      {Key key,
+      this.data,
+      this.emptyChild,
+      this.childBuilderDelegate,
+      this.call,
+      this.isLoadingMore,
+      this.divider})
       : super(key: key);
 
   @override
   _CustomListViewState createState() => _CustomListViewState();
 }
 
-
 abstract class CustomChildBuilderDelegate {
   Widget build(BuildContext context, int index, dynamic data);
 }
 
 class _CustomListViewState extends State<CustomListView> {
-
   @override
   Widget build(BuildContext context) {
     bool isLoading = widget.isLoadingMore ?? false;
 
     var sliverList = SliverList(
-      delegate:
-      SliverChildBuilderDelegate(
-            (BuildContext context, int index) {
+      delegate: SliverChildBuilderDelegate(
+        (BuildContext context, int index) {
           if (widget.data == null) {
             return Container(
               color: Colors.white12,
@@ -38,7 +42,6 @@ class _CustomListViewState extends State<CustomListView> {
               child: Center(
                 child: Column(
                   children: <Widget>[
-
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Center(
@@ -49,8 +52,8 @@ class _CustomListViewState extends State<CustomListView> {
                             strokeWidth: 4.0,
                             backgroundColor: Colors.blue,
                             // value: 0.2,
-                            valueColor: AlwaysStoppedAnimation<Color>(
-                                Colors.red),
+                            valueColor:
+                                AlwaysStoppedAnimation<Color>(Colors.red),
                           ),
                         ),
                       ),
@@ -72,8 +75,7 @@ class _CustomListViewState extends State<CustomListView> {
             if (index == widget.data.length * 2) {
               if (!isLoading) {
                 isLoading = true;
-                if (widget.call != null)
-                  widget.call();
+                if (widget.call != null) widget.call();
                 return Offstage(
                     offstage: widget.data.length < 10,
                     child: Padding(
@@ -87,14 +89,15 @@ class _CustomListViewState extends State<CustomListView> {
                 child: Text('没有更多数据啦~'),
               );
             } else {
-              return widget.childBuilderDelegate.build(context,
-                  index.toInt() ~/ 2, widget.data[index.toInt() ~/ 2]);
+              return widget.childBuilderDelegate.build(
+                  context, index.toInt() ~/ 2, widget.data[index.toInt() ~/ 2]);
             }
           }
-          return Container(
-            color: Colors.white12,
-            height: 20,
-          );
+          return widget.divider ??
+              Container(
+                color: Colors.white12,
+                height: 20,
+              );
         },
         semanticIndexCallback: (Widget widget, int localIndex) {
           if (localIndex.isEven) {

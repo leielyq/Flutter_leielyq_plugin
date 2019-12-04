@@ -87,9 +87,7 @@ class HttpUtil {
       Map<String, dynamic> headers,
       FormData formData,
       Function error}) async {
-    int _code;
     String _msg;
-    var _backData;
 
     // 检测请求地址是否是完整地址
     if (!url.startsWith('http')) {
