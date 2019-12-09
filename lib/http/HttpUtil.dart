@@ -138,4 +138,95 @@ class HttpUtil {
   netPrint(res) {
     if (!inProduction) print('$tag ===> $res');
   }
+
+  //开始使用dart的方式进行网络请求
+  Future getAwait(
+    String url, {
+    Map<String, dynamic> data,
+    Map<String, dynamic> headers,
+  }) async {
+    // 数据拼接
+    if (data != null && data.isNotEmpty) {
+      StringBuffer options = new StringBuffer('?');
+      data.forEach((key, value) {
+        options.write('${key}=${value}&');
+      });
+      String optionsStr = options.toString();
+      optionsStr = optionsStr.substring(0, optionsStr.length - 1);
+      url += optionsStr;
+    }
+
+    // 发送get请求
+    return await _awaitRequest(url, 'get', headers: headers);
+  }
+
+  Future<NetResponse> postAwait(
+    String url, {
+    Map<String, dynamic> data,
+    Map<String, dynamic> headers,
+  }) async {
+    // 发送post请求
+    return await _awaitRequest(
+      url,
+      'post',
+      data: data,
+      headers: headers,
+    );
+  }
+
+  // 请求处理
+  Future _awaitRequest(String url, String method,
+      {Map<String, dynamic> data,
+      Map<String, dynamic> headers,
+      FormData formData}) async {
+    String _msg;
+
+    // 检测请求地址是否是完整地址
+    if (!url.startsWith('http')) {
+      url = baseUrl + url;
+    }
+    netPrint("================= await  ========================");
+    netPrint("-----------------------------------------");
+    netPrint(method + " " + url);
+    netPrint(data);
+
+    Map<String, dynamic> dataMap = data == null ? new Map() : data;
+    Map<String, dynamic> headersMap = headers == null ? new Map() : headers;
+
+    headersMap.addAll(this.dataMap);
+
+    // 配置dio请求信息
+    Response response;
+    Dio dio = new Dio();
+    dio.options.connectTimeout = 10000; // 服务器链接超时，毫秒
+    dio.options.receiveTimeout = 30000; // 响应流上前后两次接受到数据的间隔，毫秒
+    dio.options.headers.addAll(headersMap); // 添加headers,如需设置统一的headers信息也可在此添加
+
+    if (method == 'get') {
+      response = await dio.get(url);
+    } else {
+      response = await dio.post(url, data: formData, queryParameters: dataMap);
+    }
+
+    NetResponse item = NetResponse();
+    item.code = response.statusCode;
+
+    if (response.statusCode != 200) {
+      item.msg = response.statusCode.toString();
+    }
+
+    netPrint(response.data);
+    item.data = response.data;
+
+    netPrint("-------------------- end ---------------------");
+    netPrint("================= await  ========================");
+
+    return item;
+  }
+}
+
+class NetResponse<T> {
+  int code;
+  String msg;
+  T data;
 }

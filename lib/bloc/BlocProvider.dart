@@ -8,7 +8,8 @@ class BlocProvider<T extends BaseBloc> extends StatefulWidget {
   final Widget child; // 这个 `widget` 在 stream 接收到通知的时候刷新
   final T bloc;
 
-  BlocProvider({Key key, @required this.child, @required this.bloc}) : super(key: key);
+  BlocProvider({Key key, @required this.child, @required this.bloc})
+      : super(key: key);
 
   @override
   _BlocProviderState<T> createState() => _BlocProviderState<T>();
@@ -25,7 +26,6 @@ class BlocProvider<T extends BaseBloc> extends StatefulWidget {
 }
 
 class _BlocProviderState<T> extends State<BlocProvider<BaseBloc>> {
-
   @override
   void dispose() {
     widget.bloc.dispose(); // 及时销毁资源
@@ -36,4 +36,45 @@ class _BlocProviderState<T> extends State<BlocProvider<BaseBloc>> {
   Widget build(BuildContext context) {
     return widget.child;
   }
+}
+
+
+//保持组件不刷新
+class KeepAliveFutureBuilder<T> extends StatefulWidget {
+  final Future<T> future;
+  final AsyncWidgetBuilder<T> builder;
+
+  KeepAliveFutureBuilder({this.future, this.builder});
+
+  @override
+  _KeepAliveFutureBuilderState<T> createState() =>
+      _KeepAliveFutureBuilderState<T>();
+}
+
+class _KeepAliveFutureBuilderState<T> extends State<KeepAliveFutureBuilder>
+    with AutomaticKeepAliveClientMixin {
+  Future<T> future;
+
+  @override
+  void initState() {
+    future = widget.future;
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    super.build(context);
+    return FutureBuilder<T>(
+      future: future,
+      builder: widget.builder,
+    );
+  }
+
+  @override
+  void didUpdateWidget(KeepAliveFutureBuilder oldWidget) {
+    super.didUpdateWidget(oldWidget);
+  }
+
+  @override
+  bool get wantKeepAlive => true;
 }

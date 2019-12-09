@@ -16,8 +16,6 @@ dependencies:
   dio: 2.1.13
   #  dio_http_cache: ^0.1.2
   extended_image: ^0.5.5
-  loading_more_list: ^0.3.7
-#  pull_to_refresh_notification: ^0.3.2
   font_awesome_flutter: ^8.0.1
   flutter_boost:
     git:
@@ -30,9 +28,9 @@ dev_dependencies:
     sdk: flutter
 
 flutter:
-
-  plugin:
+  uses-material-design: true
+  module:
     androidX: false
-    androidPackage: com.leielyq.flutter_leielyq_plugin
-    pluginClass: FlutterLeielyqPlugin
+    androidPackage: com.leielyq.flutter_module_01
+    iosBundleIdentifier: com.leielyq.flutterModule01
 
