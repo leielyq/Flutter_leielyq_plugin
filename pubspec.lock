@@ -8,15 +8,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.3.0"
-  banner_view:
-    dependency: "direct main"
-    description:
-      path: "."
-      ref: HEAD
-      resolved-ref: "2464789ba1d3b224fd3df95ad811afbaf017e29a"
-      url: "https://github.com/yangxiaoweihn/BannerView.git"
-    source: git
-    version: "1.2.0"
   boolean_selector:
     dependency: transitive
     description:
@@ -79,7 +70,7 @@ packages:
       name: extended_image
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.5.9"
+    version: "0.6.7"
   extended_image_library:
     dependency: transitive
     description:
@@ -168,7 +159,7 @@ packages:
       name: path_provider
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.4.4"
+    version: "1.5.0"
   pedantic:
     dependency: transitive
     description:
@@ -253,4 +244,4 @@ packages:
     version: "2.0.8"
 sdks:
   dart: ">=2.2.2 <3.0.0"
-  flutter: ">=0.1.4 <2.0.0"
+  flutter: ">=1.9.1+hotfix.5 <2.0.0"
