@@ -15,7 +15,7 @@ class _DragItemState extends State<DragItem> {
   Widget build(BuildContext context) {
     ScreenUtil.getInstance().init(context);
     var w = ScreenUtil.getInstance()
-        .setWidth((ScreenUtil.getInstance().width - 40) / 3);
+        .setWidth((ScreenUtil.getInstance().width - 40) ~/ 3);
 
 //    var widget = Container(
 //      color: Colors.blue,

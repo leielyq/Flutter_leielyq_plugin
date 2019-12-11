@@ -69,7 +69,7 @@ class _DragSortWidgetState<T> extends State<DragSortWidget> {
 
     ScreenUtil.getInstance().init(context);
     var w = ScreenUtil.getInstance()
-        .setWidth((ScreenUtil.getInstance().width - 41) / 3);
+        .setWidth((ScreenUtil.getInstance().width - 41)~/3);
 
     List<dynamic> widgets = _list.asMap().keys.map((index) {
       GlobalKey<_DragItemState> _key = GlobalKey<_DragItemState>();
