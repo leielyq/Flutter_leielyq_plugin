@@ -17,10 +17,8 @@ dependencies:
   #    git: https://github.com/yangxiaoweihn/BannerView.git
   dio: 2.1.13
   #  dio_http_cache: ^0.1.2
-  extended_image:
-    git:
-      url: https://github.com/leielyq/extended_image.git
-
+  extended_image: 0.6.7
+  extended_image_library: 0.1.8
   font_awesome_flutter: 8.0.1
   flutter_boost:
     git:

@@ -67,12 +67,14 @@ packages:
   extended_image:
     dependency: "direct main"
     description:
-      name: extended_image
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.6.7"
+      path: "."
+      ref: HEAD
+      resolved-ref: a88b9f31c5446bba63308cd247a4576a453d308b
+      url: "https://github.com/leielyq/extended_image.git"
+    source: git
+    version: "0.6.8"
   extended_image_library:
-    dependency: "direct main"
+    dependency: transitive
     description:
       name: extended_image_library
       url: "https://pub.dartlang.org"
