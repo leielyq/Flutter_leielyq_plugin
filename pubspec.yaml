@@ -7,6 +7,8 @@ homepage:
 environment:
   sdk: ">=2.1.0 <3.0.0"
 
+
+
 dependencies:
   flutter:
     sdk: flutter
@@ -15,13 +17,15 @@ dependencies:
   #    git: https://github.com/yangxiaoweihn/BannerView.git
   dio: 2.1.13
   #  dio_http_cache: ^0.1.2
-  extended_image: 0.5.5
-  font_awesome_flutter: ^8.0.1
+  extended_image: 0.6.7
+  extended_image_library: 0.1.8
+  font_awesome_flutter: 8.0.1
   flutter_boost:
     git:
       url: https://github.com/alibaba/flutter_boost.git
       ref: feature/flutter_1.9_upgrade
-  flutter_screenutil: ^0.5.1
+  flutter_screenutil: 0.5.1
+
 
 dev_dependencies:
   flutter_test:
