@@ -160,16 +160,16 @@ class HttpUtil {
     return await _awaitRequest(url, 'get', headers: headers);
   }
 
-  Future<NetResponse> postAwait(
-    String url, {
-    Map<String, dynamic> data,
-    Map<String, dynamic> headers,
-  }) async {
+  Future<NetResponse> postAwait(String url,
+      {Map<String, dynamic> data,
+      Map<String, dynamic> headers,
+      NetConverter netConverter}) async {
     // 发送post请求
     return await _awaitRequest(
       url,
       'post',
       data: data,
+      netConverter: netConverter,
       headers: headers,
     );
   }
@@ -178,6 +178,7 @@ class HttpUtil {
   Future _awaitRequest(String url, String method,
       {Map<String, dynamic> data,
       Map<String, dynamic> headers,
+      NetConverter netConverter,
       FormData formData}) async {
     String _msg;
 
@@ -216,7 +217,10 @@ class HttpUtil {
     }
 
     netPrint(response.data);
-    item.data = response.data;
+
+//    item.data = response.data;
+
+    item.data = netConverter?.converter(response.data) ?? response.data;
 
     netPrint("-------------------- end ---------------------");
     netPrint("================= await  ========================");
@@ -229,4 +233,8 @@ class NetResponse<T> {
   int code;
   String msg;
   T data;
+}
+
+abstract class NetConverter<T> {
+  T converter(data);
 }
