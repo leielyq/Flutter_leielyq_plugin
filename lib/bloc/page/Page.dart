@@ -82,8 +82,9 @@ abstract class PageBloc extends PageBaseBloc<Bean> {
 class PageList<T extends PageBloc> extends StatelessWidget {
   final CustomChildBuilderDelegate child;
   final Widget divider;
+  final double angle;
 
-  const PageList(this.child, {Key key, this.divider}) : super(key: key);
+  const PageList(this.child, {Key key, this.divider,this.angle}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -101,6 +102,7 @@ class PageList<T extends PageBloc> extends StatelessWidget {
             isLoadingMore: snapshot?.data?.isLoading ?? false,
             data: snapshot.data == null ? null : snapshot.data.list,
             childBuilderDelegate: child,
+            angle: angle,
             divider: divider,
           );
         });
@@ -109,7 +111,7 @@ class PageList<T extends PageBloc> extends StatelessWidget {
 
 class PageListRoot<T extends BaseBloc> extends StatefulWidget {
   final T bloc; //you need build your PageBloc!
-  final PageList blocWidget; //you need build your PageList!
+  final PageList<PageBloc> blocWidget; //you need build your PageList!
 
   const PageListRoot({Key key, this.bloc, this.blocWidget}) : super(key: key);
 

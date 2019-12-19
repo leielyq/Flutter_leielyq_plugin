@@ -8,6 +8,7 @@ class CustomListView extends StatefulWidget {
   final Function call;
   final bool isLoadingMore;
   final Widget divider;
+  final double angle;
 
   const CustomListView(
       {Key key,
@@ -16,15 +17,16 @@ class CustomListView extends StatefulWidget {
       this.childBuilderDelegate,
       this.call,
       this.isLoadingMore,
-      this.divider})
+      this.divider,
+      this.angle})
       : super(key: key);
 
   @override
   _CustomListViewState createState() => _CustomListViewState();
 }
 
-abstract class CustomChildBuilderDelegate {
-  Widget build(BuildContext context, int index, dynamic data);
+abstract class CustomChildBuilderDelegate<T> {
+  Widget build(BuildContext context, int index, T data);
 }
 
 class _CustomListViewState extends State<CustomListView> {
@@ -35,8 +37,10 @@ class _CustomListViewState extends State<CustomListView> {
     var sliverList = SliverList(
       delegate: SliverChildBuilderDelegate(
         (BuildContext context, int index) {
+          var item;
+
           if (widget.data == null) {
-            return Container(
+            item = Container(
               color: Colors.white12,
               height: 200,
               child: Center(
@@ -66,7 +70,7 @@ class _CustomListViewState extends State<CustomListView> {
           }
 
           if (widget.data.length == 0) {
-            return Center(
+            item = Center(
               child: widget.emptyChild ?? Text("No Data,woo!"),
             );
           }
@@ -76,7 +80,7 @@ class _CustomListViewState extends State<CustomListView> {
               if (!isLoading) {
                 isLoading = true;
                 if (widget.call != null) widget.call();
-                return Offstage(
+                item = Offstage(
                     offstage: widget.data.length < 10,
                     child: Padding(
                       padding: EdgeInsets.all(8.0),
@@ -85,19 +89,21 @@ class _CustomListViewState extends State<CustomListView> {
                       ),
                     ));
               }
-              return Center(
+              item = Center(
                 child: Text('没有更多数据啦~'),
               );
             } else {
-              return widget.childBuilderDelegate.build(
+              item = widget.childBuilderDelegate.build(
                   context, index.toInt() ~/ 2, widget.data[index.toInt() ~/ 2]);
             }
           }
-          return widget.divider ??
+          item = widget.divider ??
               Container(
                 color: Colors.white12,
                 height: 20,
               );
+
+          return Transform.rotate(angle: widget.angle??0, child: item);
         },
         semanticIndexCallback: (Widget widget, int localIndex) {
           if (localIndex.isEven) {
