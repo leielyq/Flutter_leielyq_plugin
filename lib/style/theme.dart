@@ -43,6 +43,14 @@ class ColorTheme {
     end: Alignment.bottomCenter,
   );
 }
+class Style{
+  static const TextStyle hintStyle = const TextStyle(color: Colors.textHint,fontSize: 14);
+  static const TextStyle pointStyle = const TextStyle(color: Colors.textPoint,fontSize: 16);
+  static const TextStyle chooseStyle = const TextStyle(color: Colors.textPoint,fontSize: 16);
+  static const TextStyle nameStyle = const TextStyle(color: Colors.textPoint,fontSize: 10);
+  static const TextStyle titleStyle = const TextStyle(color: Colors.black,fontSize: 16);
+  static const TextStyle contextStyle = const TextStyle(color: Colors.black,fontSize: 14);
+}
 
 class StyleTheme{
   static const TextStyle hintStyle = const TextStyle(color: Colors.textHint,fontSize: 14);
