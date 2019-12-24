@@ -20,10 +20,10 @@ dependencies:
   extended_image: ^0.6.7
 #  extended_image_library: 0.1.8
   font_awesome_flutter: 8.0.1
-  flutter_boost:
-    git:
-      url: https://github.com/alibaba/flutter_boost.git
-      ref: feature/base_flutter_1.12_upgrade
+#  flutter_boost:
+#    git:
+#      url: https://github.com/alibaba/flutter_boost.git
+#      ref: feature/base_flutter_1.12_upgrade
   flutter_screenutil: 0.5.1
 
 
