@@ -236,5 +236,5 @@ class NetResponse<T> {
 }
 
 abstract class NetConverter<T> {
-  T converter(data);
+  T converter(Map data);
 }
