@@ -96,7 +96,7 @@ class ScanView extends CustomPainter {
 
     Rect rect = Rect.fromCircle(center: Offset(size.width/2,size.height/2), radius: 150.0);
     Rect rect1 = Rect.fromLTRB(0, 0, size.width, rect.top);
-    Rect rect2 = Rect.fromLTRB(0, rect.bottom, size.width, size.height+100);
+    Rect rect2 = Rect.fromLTRB(0, rect.bottom, size.width, size.height);
     Rect rect3 = Rect.fromLTRB(0, rect.top, rect.left, rect.bottom);
     Rect rect4 = Rect.fromLTRB(rect.right, rect.top, size.width, rect.bottom);
     canvas.drawRect(rect1, paintBG);
