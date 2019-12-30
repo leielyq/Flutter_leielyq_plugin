@@ -97,15 +97,6 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
-  flutter_boost:
-    dependency: "direct main"
-    description:
-      path: "."
-      ref: "feature/base_flutter_1.12_upgrade"
-      resolved-ref: "2f523fd6bed02a753aa527e889cfe07ffd448647"
-      url: "https://github.com/alibaba/flutter_boost.git"
-    source: git
-    version: "0.1.63"
   flutter_screenutil:
     dependency: "direct main"
     description:
