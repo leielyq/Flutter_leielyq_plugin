@@ -32,6 +32,7 @@ abstract class PageBaseBloc<T> extends BaseBloc {
 
   PageBaseBloc() {
     countController.stream.listen((item) {
+      _bean = item;
       _count++;
     });
   }
@@ -46,7 +47,7 @@ abstract class PageBaseBloc<T> extends BaseBloc {
 
 abstract class PageBloc extends PageBaseBloc<Bean> {
   PageBloc() {
-    getData();
+//    getData();
   }
 
   void getData() {
@@ -100,7 +101,7 @@ class PageList<T extends PageBloc> extends StatelessWidget {
               _bloc.dispatch(_bloc.count, snapshot.data);
             },
             isLoadingMore: snapshot?.data?.isLoading ?? false,
-            data: snapshot.data == null ? null : snapshot.data.list,
+            data: snapshot.data == null ? null : List.from(snapshot.data.list),
             childBuilderDelegate: child,
             angle: angle,
             divider: divider,
