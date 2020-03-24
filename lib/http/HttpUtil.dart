@@ -1,4 +1,5 @@
 import 'dart:core';
+import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'dart:convert';
@@ -37,9 +38,9 @@ class HttpUtil {
 
   void get(String url,
       {Map<String, dynamic> data,
-      Map<String, dynamic> headers,
-      Function success,
-      Function error}) async {
+        Map<String, dynamic> headers,
+        Function success,
+        Function error}) async {
     // 数据拼接
     if (data != null && data.isNotEmpty) {
       StringBuffer options = new StringBuffer('?');
@@ -57,9 +58,9 @@ class HttpUtil {
 
   void post(String url,
       {Map<String, dynamic> data,
-      Map<String, dynamic> headers,
-      Function success,
-      Function error}) async {
+        Map<String, dynamic> headers,
+        Function success,
+        Function error}) async {
     // 发送post请求
     _sendRequest(url, 'post', success,
         data: data, headers: headers, error: error);
@@ -71,9 +72,9 @@ class HttpUtil {
 
   void upload(String url,
       {Map<String, dynamic> data,
-      Map<String, dynamic> headers,
-      Function success,
-      Function error}) async {
+        Map<String, dynamic> headers,
+        Function success,
+        Function error}) async {
     FormData formData = FormData.from(data);
 
     // 发送post请求
@@ -84,9 +85,9 @@ class HttpUtil {
   // 请求处理
   Future _sendRequest(String url, String method, Function success,
       {Map<String, dynamic> data,
-      Map<String, dynamic> headers,
-      FormData formData,
-      Function error}) async {
+        Map<String, dynamic> headers,
+        FormData formData,
+        Function error}) async {
     String _msg;
 
     // 检测请求地址是否是完整地址
@@ -106,16 +107,15 @@ class HttpUtil {
     // 配置dio请求信息
     Response response;
     Dio dio = new Dio();
-
-    (dio.httpClientAdapter as DefaultHttpClientAdapter).onHttpClientCreate =
-        (client) {
-      return true;
+     (dio.httpClientAdapter as DefaultHttpClientAdapter).onHttpClientCreate  = (client) {
+    client.badCertificateCallback=(cert, String host, int port){
+       return true;
     };
-
+};
     dio.options.connectTimeout = 10000; // 服务器链接超时，毫秒
     dio.options.receiveTimeout = 30000; // 响应流上前后两次接受到数据的间隔，毫秒
     dio.options.headers.addAll(headersMap); // 添加headers,如需设置统一的headers信息也可在此添加
-
+ dio.options.contentType = ContentType.parse("application/x-www-form-urlencoded");
     if (method == 'get') {
       response = await dio.get(url);
     } else {
@@ -146,8 +146,7 @@ class HttpUtil {
   }
 
   //开始使用dart的方式进行网络请求
-  Future getAwait(
-    String url, {
+  Future getAwait(String url, {
     Map<String, dynamic> data,
     Map<String, dynamic> headers,
   }) async {
@@ -168,8 +167,8 @@ class HttpUtil {
 
   Future postAwait(String url,
       {Map<String, dynamic> data,
-      Map<String, dynamic> headers,
-      NetConverter netConverter}) async {
+        Map<String, dynamic> headers,
+        NetConverter netConverter}) async {
     // 发送post请求
     return await _awaitRequest(
       url,
@@ -183,9 +182,9 @@ class HttpUtil {
   // 请求处理
   Future _awaitRequest(String url, String method,
       {Map<String, dynamic> data,
-      Map<String, dynamic> headers,
-      NetConverter netConverter,
-      FormData formData}) async {
+        Map<String, dynamic> headers,
+        NetConverter netConverter,
+        FormData formData}) async {
     String _msg;
 
     // 检测请求地址是否是完整地址
@@ -208,11 +207,16 @@ class HttpUtil {
     dio.options.connectTimeout = 10000; // 服务器链接超时，毫秒
     dio.options.receiveTimeout = 30000; // 响应流上前后两次接受到数据的间隔，毫秒
     dio.options.headers.addAll(headersMap); // 添加headers,如需设置统一的headers信息也可在此添加
-
+    (dio.httpClientAdapter as DefaultHttpClientAdapter).onHttpClientCreate  = (client) {
+        client.badCertificateCallback=(cert, String host, int port){
+          return true;
+        };
+    };
+    dio.options.contentType = ContentType.parse("application/x-www-form-urlencoded");
     if (method == 'get') {
       response = await dio.get(url);
     } else {
-      response = await dio.post(url, data: formData, queryParameters: dataMap);
+      response = await dio.post(url,data: data);
     }
 
     NetResponse item = NetResponse();
@@ -225,6 +229,7 @@ class HttpUtil {
 
     netPrint(json.encode(response.data));
 
+
     netPrint("-------------------- end ---------------------");
     netPrint("================= await  ========================");
     if (netConverter == null) {
@@ -233,6 +238,8 @@ class HttpUtil {
     } else {
       return netConverter?.converter(response.data);
     }
+
+
   }
 }
 
