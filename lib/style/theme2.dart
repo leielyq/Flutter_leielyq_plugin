@@ -33,7 +33,10 @@ class StyleTheme{
   static const TextStyle pointStyle = const TextStyle(color: Colors.textPoint,fontSize: 16);
   static const TextStyle ligthStyle = const TextStyle(color: Colors.black,fontSize: 16);
   static const TextStyle chooseStyle = const TextStyle(color: Colors.textPoint,fontSize: 16);
-  static const TextStyle nameStyle = const TextStyle(color: Colors.textPoint,fontSize: 10);
+  static const TextStyle nameStyle = const TextStyle(
+                              fontSize: 14,
+                              color: Colors.black,
+                              fontWeight: FontWeight.w500);
   static const TextStyle titleStyle = const TextStyle(color: Colors.black,fontSize: 16);
   static const TextStyle contextStyle = const TextStyle(color: Colors.black,fontSize: 14);
   static const TextStyle whiteStyle = const TextStyle(color: Colors.white);
