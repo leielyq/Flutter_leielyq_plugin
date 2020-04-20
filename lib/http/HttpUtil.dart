@@ -107,15 +107,17 @@ class HttpUtil {
     // 配置dio请求信息
     Response response;
     Dio dio = new Dio();
-     (dio.httpClientAdapter as DefaultHttpClientAdapter).onHttpClientCreate  = (client) {
-    client.badCertificateCallback=(cert, String host, int port){
-       return true;
+    (dio.httpClientAdapter as DefaultHttpClientAdapter).onHttpClientCreate =
+        (client) {
+      client.badCertificateCallback = (cert, String host, int port) {
+        return true;
+      };
     };
-};
     dio.options.connectTimeout = 10000; // 服务器链接超时，毫秒
     dio.options.receiveTimeout = 30000; // 响应流上前后两次接受到数据的间隔，毫秒
     dio.options.headers.addAll(headersMap); // 添加headers,如需设置统一的headers信息也可在此添加
- dio.options.contentType = ContentType.parse("application/x-www-form-urlencoded");
+    dio.options.contentType =
+        ContentType.parse("application/x-www-form-urlencoded");
     if (method == 'get') {
       response = await dio.get(url);
     } else {
@@ -207,24 +209,32 @@ class HttpUtil {
     dio.options.connectTimeout = 10000; // 服务器链接超时，毫秒
     dio.options.receiveTimeout = 30000; // 响应流上前后两次接受到数据的间隔，毫秒
     dio.options.headers.addAll(headersMap); // 添加headers,如需设置统一的headers信息也可在此添加
-    (dio.httpClientAdapter as DefaultHttpClientAdapter).onHttpClientCreate  = (client) {
-        client.badCertificateCallback=(cert, String host, int port){
-          return true;
-        };
+    (dio.httpClientAdapter as DefaultHttpClientAdapter).onHttpClientCreate =
+        (client) {
+      client.badCertificateCallback = (cert, String host, int port) {
+        return true;
+      };
     };
-    dio.options.contentType = ContentType.parse("application/x-www-form-urlencoded");
-    if (method == 'get') {
-      response = await dio.get(url);
-    } else {
-      response = await dio.post(url,data: data);
+    dio.options.contentType =
+        ContentType.parse("application/x-www-form-urlencoded");
+    var err;
+    try {
+      if (method == 'get') {
+        response = await dio.get(url);
+      } else {
+        response = await dio.post(url, data: data);
+      }
+    } catch (e) {
+      if (netConverter != null)
+        netConverter.onError(e);
     }
+
 
     NetResponse item = NetResponse();
     item.code = response.statusCode;
 
     if (response.statusCode != 200) {
       item.msg = response.statusCode.toString();
-//      throw Error(response.statusCode.toString());
     }
 
     netPrint(json.encode(response.data));
@@ -238,8 +248,6 @@ class HttpUtil {
     } else {
       return netConverter?.converter(response.data);
     }
-
-
   }
 }
 
@@ -251,4 +259,9 @@ class NetResponse<T> {
 
 abstract class NetConverter<T> {
   T converter(Map data);
+
+  onError(e) {
+    print(e.toString());
+  }
+
 }

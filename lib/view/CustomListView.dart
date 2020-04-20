@@ -34,6 +34,7 @@ class _CustomListViewState extends State<CustomListView> {
     bool isLoading = widget.isLoadingMore ?? false;
 
     var sliverList = SliverList(
+
       delegate: SliverChildBuilderDelegate(
             (BuildContext context, int index) {
           var item;
@@ -61,7 +62,7 @@ class _CustomListViewState extends State<CustomListView> {
                         ),
                       ),
                     ),
-                    Text('loading...')
+                    Text('加载中')
                   ],
                 ),
               ),
@@ -70,7 +71,7 @@ class _CustomListViewState extends State<CustomListView> {
 
           if (widget.data.length == 0) {
             item = Center(
-              child: widget.emptyChild ?? Text("No Data,woo!"),
+              child: widget.emptyChild ?? Text("没有数据"),
             );
           } else
 
@@ -89,7 +90,7 @@ class _CustomListViewState extends State<CustomListView> {
                     ));
               }else{
                 item = Center(
-                  child: Text('没有更多数据啦~'),
+                  child: Text('我是底线'),
                 );
               }
 
@@ -114,6 +115,7 @@ class _CustomListViewState extends State<CustomListView> {
           }
           return null;
         },
+        addAutomaticKeepAlives:false,
         childCount: widget.data != null ? widget.data.length * 2 + 1 : 1,
       ),
     );
