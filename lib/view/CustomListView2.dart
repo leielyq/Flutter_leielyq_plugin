@@ -12,19 +12,20 @@ class CustomListView2 extends StatefulWidget {
   final Widget divider; //分割
   final double angle; //显示角度
   final List data2; //存放额外数据
+  final List<Widget> header;
 
   const CustomListView2(
       {Key key,
-      this.data,
-      this.emptyChild,
-      this.childBuilderDelegate,
-      this.loadingMore,
-      this.disableLoadingMore = false,
-      this.divider,
-      this.angle,
-      this.endWidget,
-      this.loadingWidget,
-      this.data2})
+        this.data,
+        this.emptyChild,
+        this.childBuilderDelegate,
+        this.loadingMore,
+        this.disableLoadingMore = false,
+        this.divider,
+        this.angle,
+        this.endWidget,
+        this.loadingWidget,
+        this.data2, this.header=const []})
       : super(key: key);
 
   @override
@@ -42,7 +43,7 @@ class CustomListView2State extends State<CustomListView2> {
 
     var sliverList = SliverList(
       delegate: SliverChildBuilderDelegate(
-        (BuildContext context, int index) {
+            (BuildContext context, int index) {
           var item;
           if (widget.data == null) {
             item = widget.loadingWidget ??
@@ -63,7 +64,7 @@ class CustomListView2State extends State<CustomListView2> {
                                 backgroundColor: Colors.blue,
                                 // value: 0.2,
                                 valueColor:
-                                    AlwaysStoppedAnimation<Color>(Colors.red),
+                                AlwaysStoppedAnimation<Color>(Colors.red),
                               ),
                             ),
                           ),
@@ -75,9 +76,11 @@ class CustomListView2State extends State<CustomListView2> {
                 );
           } else if (widget.data.length == 0) {
             item = Center(
-              child: widget.emptyChild ?? Text("No Data,woo!"),
+              child: widget.emptyChild ?? Text("没有数据"),
             );
-          } else if (index.isEven) {
+          } else  if(widget.header.length>0&&index.toInt() <widget.header.length){
+            item = widget.header[index];
+          }else if (index.isEven) {
             if (index == widget.data.length * 2) {
               if (!disableLoadingMore) {
                 disableLoadingMore = true;
@@ -91,14 +94,15 @@ class CustomListView2State extends State<CustomListView2> {
               } else {
                 item = widget.endWidget ??
                     Center(
-                      child: Text('没有更多数据啦~'),
+                      child: Text('我是底线'),
                     );
               }
             } else {
+
               item = widget.childBuilderDelegate.build(
                   context,
                   index.toInt() ~/ 2,
-                  widget.data[index.toInt() ~/ 2],
+                  widget.data[(index.toInt()-(widget.header.length*2)) ~/ 2],
                   widget.data2);
             }
           } else {
@@ -116,7 +120,7 @@ class CustomListView2State extends State<CustomListView2> {
           }
           return null;
         },
-        childCount: widget.data != null ? widget.data.length * 2 + 1 : 1,
+        childCount: widget.data != null ? (widget.data.length) * 2 + 1+widget.header.length : 1,
       ),
     );
 
