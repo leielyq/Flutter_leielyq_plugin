@@ -80,8 +80,8 @@ class CustomListView2State extends State<CustomListView2> {
             );
           } else  if(widget.header.length>0&&index.toInt() <widget.header.length){
             item = widget.header[index];
-          }else if (index.isEven) {
-            if (index == widget.data.length * 2) {
+          }else if ((index+widget.header.length).isEven) {
+            if (index == widget.data.length * 2+widget.header.length) {
               if (!disableLoadingMore) {
                 disableLoadingMore = true;
                 if (widget.loadingMore != null) widget.loadingMore();
@@ -98,11 +98,11 @@ class CustomListView2State extends State<CustomListView2> {
                     );
               }
             } else {
-
+              print((index.toInt()-(widget.header.length)) ~/ 2);
               item = widget.childBuilderDelegate.build(
                   context,
                   index.toInt() ~/ 2,
-                  widget.data[(index.toInt()-(widget.header.length*2)) ~/ 2],
+                  widget.data[(index.toInt()-(widget.header.length)) ~/ 2],
                   widget.data2);
             }
           } else {
