@@ -4,6 +4,8 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'dart:convert';
 
+import 'package:dio_http_cache/dio_http_cache.dart';
+
 const bool inProduction = const bool.fromEnvironment("dart.vm.product");
 
 class HttpUtil {
@@ -206,6 +208,7 @@ class HttpUtil {
     // 配置dio请求信息
     Response response;
     Dio dio = new Dio();
+    dio.interceptors.add(DioCacheManager(CacheConfig(baseUrl: baseUrl)).interceptor);
     dio.options.connectTimeout = 10000; // 服务器链接超时，毫秒
     dio.options.receiveTimeout = 30000; // 响应流上前后两次接受到数据的间隔，毫秒
     dio.options.headers.addAll(headersMap); // 添加headers,如需设置统一的headers信息也可在此添加
@@ -220,9 +223,9 @@ class HttpUtil {
     var err;
     try {
       if (method == 'get') {
-        response = await dio.get(url);
+        response = await dio.get(url,options: buildCacheOptions(Duration(seconds: 5),maxStale: Duration(days: 7), forceRefresh: true));
       } else {
-        response = await dio.post(url, data: data);
+        response = await dio.post(url, data: data,options: buildCacheOptions(Duration(seconds: 5),maxStale: Duration(days: 7), forceRefresh: true));
       }
     } catch (e) {
       if (netConverter != null)
