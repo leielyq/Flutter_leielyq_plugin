@@ -69,14 +69,13 @@ class CustomListView2State extends State<CustomListView2> {
                             ),
                           ),
                         ),
-                        Text('loading...')
                       ],
                     ),
                   ),
                 );
           } else if (widget.data.length == 0) {
             item = Center(
-              child: widget.emptyChild ?? Text("没有数据"),
+              child: widget.emptyChild ?? Text(" - No Data - "),
             );
           } else  if(widget.header.length>0&&index.toInt() <widget.header.length){
             item = widget.header[index];
@@ -94,7 +93,7 @@ class CustomListView2State extends State<CustomListView2> {
               } else {
                 item = widget.endWidget ??
                     Center(
-                      child: Text('我是底线'),
+                      child: Text(' - End - '),
                     );
               }
             } else {
