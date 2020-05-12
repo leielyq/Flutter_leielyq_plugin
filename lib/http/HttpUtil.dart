@@ -220,19 +220,21 @@ class HttpUtil {
     };
     dio.options.contentType =
         ContentType.parse("application/x-www-form-urlencoded");
-    NetResponse item = NetResponse();
+    var err;
     try {
       if (method == 'get') {
         response = await dio.get(url,options: buildCacheOptions(Duration(seconds: 5),maxStale: Duration(days: 7), forceRefresh: true));
       } else {
         response = await dio.post(url, data: data,options: buildCacheOptions(Duration(seconds: 5),maxStale: Duration(days: 7), forceRefresh: true));
       }
-      item.code = response.statusCode;
     } catch (e) {
       if (netConverter != null)
         netConverter.onError(e);
     }
 
+
+    NetResponse item = NetResponse();
+    item.code = response.statusCode;
 
     if (response.statusCode != 200) {
       item.msg = response.statusCode.toString();
