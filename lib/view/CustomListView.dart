@@ -89,9 +89,7 @@ class _CustomListViewState extends State<CustomListView> {
                       ),
                     ));
               }else{
-                item = Center(
-                  child: Text('我是底线'),
-                );
+                item = Container();
               }
 
             } else {
