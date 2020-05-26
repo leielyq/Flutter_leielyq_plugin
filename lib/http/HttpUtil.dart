@@ -1,6 +1,7 @@
 import 'dart:core';
 import 'dart:io';
 
+import 'package:dio/adapter.dart';
 import 'package:dio/dio.dart';
 import 'dart:convert';
 
@@ -77,7 +78,7 @@ class HttpUtil {
         Map<String, dynamic> headers,
         Function success,
         Function error}) async {
-    FormData formData = FormData.from(data);
+    FormData formData = FormData.fromMap(data);
 
     // 发送post请求
     _sendRequest(url, 'post', success,
@@ -119,7 +120,7 @@ class HttpUtil {
     dio.options.receiveTimeout = 30000; // 响应流上前后两次接受到数据的间隔，毫秒
     dio.options.headers.addAll(headersMap); // 添加headers,如需设置统一的headers信息也可在此添加
     dio.options.contentType =
-        ContentType.parse("application/x-www-form-urlencoded");
+        ContentType.parse("application/x-www-form-urlencoded") as String;
     if (method == 'get') {
       response = await dio.get(url);
     } else {
@@ -219,7 +220,7 @@ class HttpUtil {
       };
     };
     dio.options.contentType =
-        ContentType.parse("application/x-www-form-urlencoded");
+        ContentType.parse("application/x-www-form-urlencoded") as String;
     var err;
     try {
       if (method == 'get') {
