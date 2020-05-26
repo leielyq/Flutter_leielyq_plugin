@@ -74,15 +74,15 @@ class HttpUtil {
   });*/
 
   void upload(String url,
-      {Map<String, dynamic> data,
+      {FormData data,
         Map<String, dynamic> headers,
         Function success,
         Function error}) async {
-    FormData formData = FormData.fromMap(data);
+//    FormData formData = FormData.fromMap(data);
 
     // 发送post请求
     _sendRequest(url, 'post', success,
-        formData: formData, headers: headers, error: error);
+        formData: data, headers: headers, error: error);
   }
 
   // 请求处理
@@ -120,7 +120,7 @@ class HttpUtil {
     dio.options.receiveTimeout = 30000; // 响应流上前后两次接受到数据的间隔，毫秒
     dio.options.headers.addAll(headersMap); // 添加headers,如需设置统一的headers信息也可在此添加
     dio.options.contentType =
-        ContentType.parse("application/x-www-form-urlencoded") as String;
+        ContentType.parse("application/x-www-form-urlencoded").value;
     if (method == 'get') {
       response = await dio.get(url);
     } else {
@@ -220,7 +220,7 @@ class HttpUtil {
       };
     };
     dio.options.contentType =
-        ContentType.parse("application/x-www-form-urlencoded") as String;
+        ContentType.parse("application/x-www-form-urlencoded").value;
     var err;
     try {
       if (method == 'get') {
