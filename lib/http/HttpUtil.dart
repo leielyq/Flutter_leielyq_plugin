@@ -99,14 +99,50 @@ class HttpUtil {
         Map<String, dynamic> headers,
         Function success,
         Function error}) async {
+
+    Dio dio = Dio();
+
+    (dio.httpClientAdapter as DefaultHttpClientAdapter).onHttpClientCreate =
+        (client) {
+      client.badCertificateCallback = (cert, String host, int port) {
+        return true;
+      };
+    };
+    dio.options.connectTimeout = 10000; // 服务器链接超时，毫秒
+    dio.options.receiveTimeout = 30000; // 响应流上前后两次接受到数据的间隔，毫秒
+    dio.options.followRedirects = true;
+    if(this.dataMap!=null&&this.dataMap.length>0){
+      dio.options.headers.addAll(this.dataMap); // 添加headers,如需设置统一的headers信息也可在此添加
+    }
+
+    dio.options.contentType = Headers.formUrlEncodedContentType;
     dio.options.contentType = 'multipart/form-data';
-    // 发送post请求
-    _sendRequest(url, 'post', (res){
-      dio.options.contentType = Headers.formUrlEncodedContentType;
-      success(res);
-    },
-        formData: data, headers: headers, error: error);
+
+    String _msg;
+
+    // 检测请求地址是否是完整地址
+    if (!url.startsWith('http')) {
+      url = baseUrl + url;
+    }
+
+    Response response;
+
+    response = await send('post', response, url, data);
+
+    response?.statusCode??=503;
+    if (response.statusCode != 200) {
+      _msg = '网络请求错误,状态码:' + response.statusCode.toString();
+      _handError(error, _msg);
+      return;
+    }
+
+    if (success != null) success(response.data);
+
+
   }
+
+
+
 
   // 请求处理
   Future _sendRequest(String url, String method, Function success,
@@ -115,12 +151,6 @@ class HttpUtil {
         FormData formData,
         Function error}) async {
     String _msg;
-
-    // 检测请求地址是否是完整地址
-    if (!url.startsWith('http')) {
-      url = baseUrl + url;
-    }
-
     Response response;
 
     response = await send(method, response, url, data??formData);
@@ -183,11 +213,11 @@ class HttpUtil {
       {Map<String, dynamic> data,
         Map<String, dynamic> headers,
         NetConverter netConverter,
-        FormData formData}) async {
+      }) async {
     // 配置dio请求信息
     Response response;
     try {
-      response = await send(method, response, url, formData??data);
+      response = await send(method, response, url, data);
     } catch (e) {
       if (netConverter != null) netConverter.onError(e);
     }
@@ -211,21 +241,21 @@ class HttpUtil {
 
   }
 
-  Future<Response> send(String method, Response response, String url, Map<String, dynamic> data) async {
+  Future<Response<dynamic>> send(String method, Response<dynamic> response, String url, data,{myDio}) async {
 
     // 检测请求地址是否是完整地址
     if (!url.startsWith('http')) {
       url = baseUrl + url;
     }
     if (method == 'get') {
-      response = await dio.get(url,
+      response = await (myDio??dio).get(url,
           options: buildCacheOptions(Duration(seconds: 5),
             maxStale: Duration(days: 7), ));
     } else {
-      response = await dio.post(url,
+      response = await (myDio??dio).post(url,
           data: data,
           options: buildCacheOptions(Duration(seconds: 5),
-            maxStale: Duration(days: 7),),queryParameters: data);
+            maxStale: Duration(days: 7),));
     }
     return response;
   }

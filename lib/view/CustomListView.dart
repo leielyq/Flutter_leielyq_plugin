@@ -62,7 +62,6 @@ class _CustomListViewState extends State<CustomListView> {
                         ),
                       ),
                     ),
-                    Text('加载中')
                   ],
                 ),
               ),
@@ -71,7 +70,7 @@ class _CustomListViewState extends State<CustomListView> {
 
           if (widget.data.length == 0) {
             item = Center(
-              child: widget.emptyChild ?? Text("没有数据"),
+              child: widget.emptyChild ?? Container(),
             );
           } else
 

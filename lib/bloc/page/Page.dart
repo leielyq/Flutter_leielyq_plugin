@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/widgets.dart';
 import 'package:flutter_leielyq_plugin/view/CustomListView.dart';
+import 'package:flutter_leielyq_plugin/view/CustomListView2.dart';
 
 import '../BlocProvider.dart';
 
@@ -47,7 +48,7 @@ abstract class PageBaseBloc<T> extends BaseBloc {
 
 abstract class PageBloc extends PageBaseBloc<Bean> {
   PageBloc() {
-//    getData();
+
   }
 
   void getData() {
@@ -63,25 +64,11 @@ abstract class PageBloc extends PageBaseBloc<Bean> {
     countController.sink.add(bean);
   }
 
-  /*@override
-  void dispatch(int page, Bean<HotContentEntity> bean) {
-    NetUtils().loadHotContentList((res) {
-      List<HotContentEntity> list = List();
-
-      if (res != null) {
-        for (int i = 0; i < res.length; i++) {
-          var item = res[i];
-          list.add(HotContentEntity.fromJson(item));
-        }
-      }
-      addAll(list, bean);
-    }, id, page, type);
-  }*/
   void dispatch(int page, Bean bean);
 }
 
 class PageList<T extends PageBloc> extends StatelessWidget {
-  final CustomChildBuilderDelegate child;
+  final CustomChildBuilderDelegate2 child;
   final Widget divider;
   final Widget endWidget;
   final double angle;
@@ -97,11 +84,11 @@ class PageList<T extends PageBloc> extends StatelessWidget {
         stream: _bloc.stream,
         initialData: null,
         builder: (BuildContext context, AsyncSnapshot<Bean> snapshot) {
-          return CustomListView(
-            call: () {
+          return CustomListView2(
+            loadingMore: () {
               _bloc.dispatch(_bloc.count, snapshot.data);
             },
-            isLoadingMore: snapshot?.data?.isLoading ?? false,
+            disableLoadingMore: snapshot?.data?.isLoading ?? false,
             data: snapshot.data == null ? null : List.from(snapshot.data.list),
             childBuilderDelegate: child,
             angle: angle,
