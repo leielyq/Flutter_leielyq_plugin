@@ -9,16 +9,34 @@ import 'package:dio_http_cache/dio_http_cache.dart';
 
 const bool inProduction = const bool.fromEnvironment("dart.vm.product");
 
+Dio dio = new Dio();
+
 class HttpUtil {
   // 工厂模式
   factory HttpUtil() => getInstance();
 
   static HttpUtil get instance => getInstance();
   static HttpUtil _instance;
-
+  Map<String, dynamic> dataMap;
   final String tag = "HttpUtil";
 
-  HttpUtil._internal() {}
+  HttpUtil._internal() {
+    if (!inProduction)
+      dio.interceptors.add(LogInterceptor(responseBody: true)); //开启请求日志
+    (dio.httpClientAdapter as DefaultHttpClientAdapter).onHttpClientCreate =
+        (client) {
+      client.badCertificateCallback = (cert, String host, int port) {
+        return true;
+      };
+    };
+    dio.options.connectTimeout = 10000; // 服务器链接超时，毫秒
+    dio.options.receiveTimeout = 30000; // 响应流上前后两次接受到数据的间隔，毫秒
+    dio.options.followRedirects = true;
+    if(this.dataMap!=null&&this.dataMap.length>0){
+      dio.options.headers.addAll(this.dataMap); // 添加headers,如需设置统一的headers信息也可在此添加
+    }
+
+  }
 
   static HttpUtil getInstance() {
     if (_instance == null) {
@@ -27,10 +45,13 @@ class HttpUtil {
     return _instance;
   }
 
-  Map<String, dynamic> dataMap;
+
 
   void addHeader(Map<String, dynamic> data) {
     dataMap = data;
+    if(this.dataMap!=null&&this.dataMap.length>0){
+      dio.options.headers.addAll(this.dataMap); // 添加headers,如需设置统一的headers信息也可在此添加
+    }
   }
 
   String baseUrl = '';
@@ -69,16 +90,12 @@ class HttpUtil {
         data: data, headers: headers, error: error);
   }
 
-  /*FormData formData = new FormData.from({
-    "file": new UploadFileInfo(new File(path), name)
-  });*/
 
   void upload(String url,
       {FormData data,
         Map<String, dynamic> headers,
         Function success,
         Function error}) async {
-//    FormData formData = FormData.fromMap(data);
 
     // 发送post请求
     _sendRequest(url, 'post', success,
@@ -97,44 +114,18 @@ class HttpUtil {
     if (!url.startsWith('http')) {
       url = baseUrl + url;
     }
-    netPrint("=========================================");
-    netPrint("-----------------------------------------");
-    netPrint(method + " " + url);
-    netPrint(data);
 
-    Map<String, dynamic> dataMap = data == null ? new Map() : data;
-    Map<String, dynamic> headersMap = headers == null ? new Map() : headers;
-
-    headersMap.addAll(this.dataMap);
-
-    // 配置dio请求信息
     Response response;
-    Dio dio = new Dio();
-    (dio.httpClientAdapter as DefaultHttpClientAdapter).onHttpClientCreate =
-        (client) {
-      client.badCertificateCallback = (cert, String host, int port) {
-        return true;
-      };
-    };
-    dio.options.connectTimeout = 10000; // 服务器链接超时，毫秒
-    dio.options.receiveTimeout = 30000; // 响应流上前后两次接受到数据的间隔，毫秒
-    dio.options.headers.addAll(headersMap); // 添加headers,如需设置统一的headers信息也可在此添加
-    dio.options.contentType =
-        ContentType.parse("application/x-www-form-urlencoded").value;
-    if (method == 'get') {
-      response = await dio.get(url);
-    } else {
-      response = await dio.post(url, data: formData, queryParameters: dataMap);
-    }
 
+    response = await send(method, response, url, data);
+
+    response?.statusCode??=503;
     if (response.statusCode != 200) {
       _msg = '网络请求错误,状态码:' + response.statusCode.toString();
-      netPrint(response.data);
       _handError(error, _msg);
       return;
     }
 
-    netPrint(response.data);
     if (success != null) success(response.data);
   }
 
@@ -142,19 +133,16 @@ class HttpUtil {
   Future _handError(Function errorCallback, String errorMsg) {
     if (errorCallback != null) {
       errorCallback(errorMsg);
-      netPrint(errorMsg);
     }
   }
 
-  netPrint(res) {
-    if (!inProduction) print('$tag ===> $res');
-  }
 
   //开始使用dart的方式进行网络请求
-  Future getAwait(String url, {
-    Map<String, dynamic> data,
-    Map<String, dynamic> headers,
-  }) async {
+  Future getAwait(
+      String url, {
+        Map<String, dynamic> data,
+        Map<String, dynamic> headers,
+      }) async {
     // 数据拼接
     if (data != null && data.isNotEmpty) {
       StringBuffer options = new StringBuffer('?');
@@ -190,68 +178,50 @@ class HttpUtil {
         Map<String, dynamic> headers,
         NetConverter netConverter,
         FormData formData}) async {
-    String _msg;
-
-    // 检测请求地址是否是完整地址
-    if (!url.startsWith('http')) {
-      url = baseUrl + url;
-    }
-    netPrint("================= await  ========================");
-    netPrint("-----------------------------------------");
-    netPrint(method + " " + url);
-    netPrint(data);
-
-    Map<String, dynamic> dataMap = data == null ? new Map() : data;
-    Map<String, dynamic> headersMap = headers == null ? new Map() : headers;
-
-    headersMap.addAll(this.dataMap);
-
     // 配置dio请求信息
     Response response;
-    Dio dio = new Dio();
-    dio.interceptors.add(DioCacheManager(CacheConfig(baseUrl: baseUrl)).interceptor);
-    dio.options.connectTimeout = 10000; // 服务器链接超时，毫秒
-    dio.options.receiveTimeout = 30000; // 响应流上前后两次接受到数据的间隔，毫秒
-    dio.options.headers.addAll(headersMap); // 添加headers,如需设置统一的headers信息也可在此添加
-    (dio.httpClientAdapter as DefaultHttpClientAdapter).onHttpClientCreate =
-        (client) {
-      client.badCertificateCallback = (cert, String host, int port) {
-        return true;
-      };
-    };
-    dio.options.contentType =
-        ContentType.parse("application/x-www-form-urlencoded").value;
-    var err;
     try {
-      if (method == 'get') {
-        response = await dio.get(url,options: buildCacheOptions(Duration(seconds: 5),maxStale: Duration(days: 7), forceRefresh: true));
-      } else {
-        response = await dio.post(url, data: data,options: buildCacheOptions(Duration(seconds: 5),maxStale: Duration(days: 7), forceRefresh: true));
-      }
+      response = await send(method, response, url, data);
     } catch (e) {
-      if (netConverter != null)
-        netConverter.onError(e);
+      if (netConverter != null) netConverter.onError(e);
     }
 
-
     NetResponse item = NetResponse();
+
+    response?.statusCode??=503;
+
     item.code = response.statusCode;
 
     if (response.statusCode != 200) {
       item.msg = response.statusCode.toString();
     }
 
-    netPrint(json.encode(response.data));
-
-
-    netPrint("-------------------- end ---------------------");
-    netPrint("================= await  ========================");
     if (netConverter == null) {
       item.data = response.data;
       return item;
     } else {
       return netConverter?.converter(response.data);
     }
+
+  }
+
+  Future<Response> send(String method, Response response, String url, Map<String, dynamic> data) async {
+
+    // 检测请求地址是否是完整地址
+    if (!url.startsWith('http')) {
+      url = baseUrl + url;
+    }
+    if (method == 'get') {
+      response = await dio.get(url,
+          options: buildCacheOptions(Duration(seconds: 5),
+            maxStale: Duration(days: 7), ));
+    } else {
+      response = await dio.request(url,
+          data: data,
+          options: buildCacheOptions(Duration(seconds: 5),
+            maxStale: Duration(days: 7),),queryParameters: data);
+    }
+    return response;
   }
 }
 
@@ -267,5 +237,4 @@ abstract class NetConverter<T> {
   onError(e) {
     print(e.toString());
   }
-
 }
