@@ -36,6 +36,9 @@ class HttpUtil {
       dio.options.headers.addAll(this.dataMap); // 添加headers,如需设置统一的headers信息也可在此添加
     }
 
+    dio.options.contentType = Headers.formUrlEncodedContentType;
+
+
   }
 
   static HttpUtil getInstance() {
@@ -96,9 +99,12 @@ class HttpUtil {
         Map<String, dynamic> headers,
         Function success,
         Function error}) async {
-
+    dio.options.contentType = 'multipart/form-data';
     // 发送post请求
-    _sendRequest(url, 'post', success,
+    _sendRequest(url, 'post', (res){
+      dio.options.contentType = Headers.formUrlEncodedContentType;
+      success(res);
+    },
         formData: data, headers: headers, error: error);
   }
 
@@ -117,7 +123,7 @@ class HttpUtil {
 
     Response response;
 
-    response = await send(method, response, url, data);
+    response = await send(method, response, url, data??formData);
 
     response?.statusCode??=503;
     if (response.statusCode != 200) {
@@ -181,7 +187,7 @@ class HttpUtil {
     // 配置dio请求信息
     Response response;
     try {
-      response = await send(method, response, url, data);
+      response = await send(method, response, url, formData??data);
     } catch (e) {
       if (netConverter != null) netConverter.onError(e);
     }
@@ -216,7 +222,7 @@ class HttpUtil {
           options: buildCacheOptions(Duration(seconds: 5),
             maxStale: Duration(days: 7), ));
     } else {
-      response = await dio.request(url,
+      response = await dio.post(url,
           data: data,
           options: buildCacheOptions(Duration(seconds: 5),
             maxStale: Duration(days: 7),),queryParameters: data);
