@@ -108,14 +108,15 @@ class HttpUtil {
         return true;
       };
     };
+    if (!inProduction)
+      dio.interceptors.add(LogInterceptor(responseBody: true)); //开启请求日志
     dio.options.connectTimeout = 10000; // 服务器链接超时，毫秒
     dio.options.receiveTimeout = 30000; // 响应流上前后两次接受到数据的间隔，毫秒
-    dio.options.followRedirects = true;
+
     if(this.dataMap!=null&&this.dataMap.length>0){
       dio.options.headers.addAll(this.dataMap); // 添加headers,如需设置统一的headers信息也可在此添加
     }
 
-    dio.options.contentType = Headers.formUrlEncodedContentType;
     dio.options.contentType = 'multipart/form-data';
 
     String _msg;
@@ -127,7 +128,7 @@ class HttpUtil {
 
     Response response;
 
-    response = await send('post', response, url, data,myDio: dio);
+    response =  await dio.post(url, data: data);;
 
     response?.statusCode??=503;
     if (response.statusCode != 200) {
