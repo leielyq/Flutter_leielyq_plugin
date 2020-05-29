@@ -127,7 +127,7 @@ class HttpUtil {
 
     Response response;
 
-    response = await send('post', response, url, data);
+    response = await send('post', response, url, data,myDio: dio);
 
     response?.statusCode??=503;
     if (response.statusCode != 200) {
