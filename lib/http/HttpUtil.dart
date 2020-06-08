@@ -110,8 +110,8 @@ class HttpUtil {
     };
     if (!inProduction)
       dio.interceptors.add(LogInterceptor(responseBody: true)); //开启请求日志
-    dio.options.connectTimeout = 10000; // 服务器链接超时，毫秒
-    dio.options.receiveTimeout = 30000; // 响应流上前后两次接受到数据的间隔，毫秒
+    dio.options.connectTimeout = 100000; // 服务器链接超时，毫秒
+    dio.options.receiveTimeout = 300000; // 响应流上前后两次接受到数据的间隔，毫秒
 
     if(this.dataMap!=null&&this.dataMap.length>0){
       dio.options.headers.addAll(this.dataMap); // 添加headers,如需设置统一的headers信息也可在此添加
