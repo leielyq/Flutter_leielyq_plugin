@@ -38,7 +38,7 @@ class HttpUtil {
 
     dio.options.contentType = Headers.formUrlEncodedContentType;
 
-
+    dio.interceptors.add(DioCacheManager(CacheConfig()).interceptor);
   }
 
   static HttpUtil getInstance() {
@@ -215,30 +215,36 @@ class HttpUtil {
         Map<String, dynamic> headers,
         NetConverter netConverter,
       }) async {
+
+
+    print(data.toString());
     // 配置dio请求信息
     Response response;
     try {
       response = await send(method, response, url, data);
     } catch (e) {
       if (netConverter != null) netConverter.onError(e);
+      return;
     }
 
     NetResponse item = NetResponse();
 
-    response?.statusCode??=503;
+    if(response!=null){
+      item.code = response.statusCode;
 
-    item.code = response.statusCode;
+      if (response.statusCode != 200) {
+        item.msg = response.statusCode.toString();
+      }
 
-    if (response.statusCode != 200) {
-      item.msg = response.statusCode.toString();
+      if (netConverter == null) {
+        item.data = response.data;
+        return item;
+      } else {
+        return netConverter?.converter(response.data);
+      }
+
     }
 
-    if (netConverter == null) {
-      item.data = response.data;
-      return item;
-    } else {
-      return netConverter?.converter(response.data);
-    }
 
   }
 
@@ -250,12 +256,12 @@ class HttpUtil {
     }
     if (method == 'get') {
       response = await (myDio??dio).get(url,
-          options: buildCacheOptions(Duration(days: 7),
+          options: buildCacheOptions(Duration(seconds: 60),
             maxStale: Duration(days: 10), ));
     } else {
       response = await (myDio??dio).post(url,
           data: data,
-          options: buildCacheOptions(Duration(days: 7),
+          options: buildCacheOptions(Duration(seconds: 60),
             maxStale: Duration(days: 10),));
     }
     return response;
