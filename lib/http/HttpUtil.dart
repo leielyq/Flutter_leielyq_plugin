@@ -250,13 +250,13 @@ class HttpUtil {
     }
     if (method == 'get') {
       response = await (myDio??dio).get(url,
-          options: buildCacheOptions(Duration(seconds: 5),
-            maxStale: Duration(days: 7), ));
+          options: buildCacheOptions(Duration(days: 7),
+            maxStale: Duration(days: 10), ));
     } else {
       response = await (myDio??dio).post(url,
           data: data,
-          options: buildCacheOptions(Duration(seconds: 5),
-            maxStale: Duration(days: 7),));
+          options: buildCacheOptions(Duration(days: 7),
+            maxStale: Duration(days: 10),));
     }
     return response;
   }
